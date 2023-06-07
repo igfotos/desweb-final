@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Clientes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #0b7540;
+            font-size: 22px;
+          
+        }
+        
+        h1 {
+            color: white;
+            font-size: 50px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .container {
+            margin-top: 50px;
+        }
+        
+        .icon-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 20px;
+            text-decoration: none;
+            color: white;
+            background-color: rgb(87, 60, 245);
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .icon-link:hover {
+            background-color: rgb(82, 153, 230);
+        }
+        
+        th, td {
+            vertical-align: middle !important;
+            text-align: center;
+            color: white
+        }
+        
+        .btn-sm {
+            background-color: rgb(1, 1, 6);
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .alert {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>Consulta de Clientes</h1>
+            <hr>
+            <div id="output"></div>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">ID</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody id="exibir"></tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col d-flex justify-content-center">
+                <a class="icon-link" href="form.html">
+                    Novo Cadastro
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        axios.get('http://localhost:3000/cliente')
+            .then(function (response){
+             document.getElementById('exibir').innerHTML = response.data.map(function (cliente){
+                return (
+                    '<tr>' +
+                        '<td> <a class="btn btn-outline-info btn-sm" href="#" role="button" onclick="javascript:return editarCliente(`'+cliente._id+'`);">Editar</a> </td>' +
+                        '<th scope="row">'+ cliente._id +'</th>' +
+                        '<td>'+ cliente.email +'</td>' +
+                        '<td>'+ cliente.nome +'</td>' +
+                        '<td> <a class="btn btn-outline-danger btn-sm" href="#" role="button" onclick="javascript:return excluirCliente(`'+cliente._id+'`);">Excluir</a> </td>' +
+                    '</tr>'
+                );
+             }).join('');   
+            })
+            .catch(function (err){
+                document.getElementById('output').innerHTML = '<div class="alert alert-danger" role="alert">'+ err.message +'</div>';
+            });
+
+        function excluirCliente(id) {
+            axios.delete('http://localhost:3000/cliente/'+ id +'')
+            .then(function(response){
+                location.reload();
+            })
+            .catch(function (err){
+                document.getElementById("output").innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>'+ err.message +'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+            });
+        }
+
+        function editarCliente(id) {
+            window.location.href = 'form.html?id='+ id +'';
+        }
+            
+    </script>
+</body>
+</html>
